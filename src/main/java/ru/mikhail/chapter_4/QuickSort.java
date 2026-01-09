@@ -14,8 +14,8 @@ public class QuickSort {
         if (begin < end) {
             int pi = partition(arr, begin, end);
 
-            quickSort(arr, begin, pi - 1);
             quickSort(arr, pi + 1, end);
+            quickSort(arr, begin, pi - 1);
         }
     }
 
@@ -27,13 +27,13 @@ public class QuickSort {
                 swap(arr, i, ++pi);
             }
         }
-        swap(arr, ++pi, end);
+        swap(arr, end, ++pi);
         return pi;
     }
 
-    private static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
+    private static void swap(int[] arr, int x, int y) {
+        int t = arr[x];
+        arr[x] = arr[y];
+        arr[y] = t;
     }
 }
