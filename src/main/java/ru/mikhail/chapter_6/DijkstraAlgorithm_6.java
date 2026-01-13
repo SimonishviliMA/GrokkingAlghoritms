@@ -7,17 +7,15 @@ public class DijkstraAlgorithm_6 {
     public static void main(String[] args) {
 
         Map<String, List<Vertex>> graph = new HashMap<>();
-        graph.put("A", List.of(new Vertex("B", 5), new Vertex("C", 10)));
-        graph.put("B", List.of(new Vertex("D", 7), new Vertex("E", 1)));
-        graph.put("C", List.of(new Vertex("D", 2), new Vertex("E", 8)));
-        graph.put("D", List.of(new Vertex("F", 2)));
-        graph.put("E", List.of(new Vertex("F", 1)));
-        graph.put("F", List.of());
+        graph.put("A", List.of(new Vertex("C", 6), new Vertex("F", 13), new Vertex("B", 10), new Vertex("E", 18)));
+        graph.put("C", List.of(new Vertex("F", 1)));
+        graph.put("F", List.of(new Vertex("B", 1)));
+        graph.put("E", List.of(new Vertex("D", 12)));
+        graph.put("D", List.of(new Vertex("C", 8), new Vertex("F", 4)));
+        graph.put("B", List.of());
 
-        String target = "F";
-        String head = "A";
         System.out.println(
-                dijkstraAlgorithmSearch(graph, head, target)
+                dijkstraAlgorithmSearch(graph, "A", "B")
         );
     }
 
