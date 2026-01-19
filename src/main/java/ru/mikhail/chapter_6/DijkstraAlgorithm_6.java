@@ -3,71 +3,61 @@ package ru.mikhail.chapter_6;
 import java.util.*;
 
 public class DijkstraAlgorithm_6 {
-
     public static void main(String[] args) {
-
-        Map<String, List<Vertex>> graph = new HashMap<>();
-        graph.put("A", List.of(new Vertex("C", 6), new Vertex("F", 13), new Vertex("B", 10), new Vertex("E", 18)));
-        graph.put("C", List.of(new Vertex("F", 1)));
-        graph.put("F", List.of(new Vertex("B", 1)));
-        graph.put("E", List.of(new Vertex("D", 12)));
-        graph.put("D", List.of(new Vertex("C", 8), new Vertex("F", 4)));
-        graph.put("B", List.of());
+        List<Vertex<Integer>>[] graph = new List[] {
+                List.of(new Vertex<>(1, 5), new Vertex<>(2, 7), new Vertex<>(3,1)),
+                List.of(new Vertex<>(4, 6)),
+                List.of(new Vertex<>(4, 1), new Vertex<>(5, 4), new Vertex<>(6, 3)),
+                List.of(new Vertex<>(6, 12)),
+                List.of(new Vertex<>(5, 0)),
+                List.of(new Vertex<>(6, 1)),
+                List.of()
+        };
 
         System.out.println(
-                dijkstraAlgorithmSearch(graph, "A", "B")
+                dijkstraAlgorithmSearch(graph, 0,6)
         );
+
     }
 
-    private static Path dijkstraAlgorithmSearch(Map<String, List<Vertex>> graph, String headName, String targetName) {
-        Map<String, Vertex> paths = new HashMap<>();
-        Queue<String> parents = new ArrayDeque<>(List.of(headName));
-        while (!parents.isEmpty()) {
-            String parentName = parents.poll();
-            List<Vertex> parent = graph.get(parentName);
-            for (Vertex child : parent) {
-                int sum = child.cost() + (paths.containsKey(parentName) ? paths.get(parentName).cost() : 0);
-                String childName = child.name();
-                if (paths.containsKey(childName)) {
-                    Vertex path = paths.get(childName);
-                    if (path.cost() > sum) {
-                        paths.put(childName, new Vertex(parentName, sum));
-                    }
-                } else {
-                    paths.put(childName, new Vertex(parentName, sum));
-                }
-                parents.add(childName);
-            }
-        }
 
-        Vertex vertex = paths.get(targetName);
-        if (vertex == null) throw new RuntimeException("Path to target doesn't exist");
-        int totalCost = vertex.cost();
+    private static Path<Integer> dijkstraAlgorithmSearch(List<Vertex<Integer>>[] graph, int head, int target) {
+        int graphSize = graph.length;
+        boolean[] checked = new boolean[graphSize];
+        int[] cost = new int[graphSize];
+        int[] parents = new int[graphSize];
+        Arrays.fill(cost, Integer.MAX_VALUE - 1);
+        Arrays.fill(parents, -1);
 
-        Stack<String> pathToTarget = new Stack<>();
-        pathToTarget.add(targetName);
-        while (vertex != null && !vertex.name().equals(headName)) {
-            pathToTarget.add(vertex.name());
-            vertex = paths.get(vertex.name());
-        }
-        pathToTarget.add(headName);
-        return new Path(pathToTarget, totalCost);
-    }
 
-    private record Vertex(String name, int cost) {}
 
-    private record Path(Stack<String> pathToTarget, int totalCost) {
-
-        @Override
-        public String toString() {
-            StringBuilder path = new StringBuilder();
-            for (int i = pathToTarget.size() - 1; i >= 0; i--) {
-                path.append(pathToTarget.pop());
-                if (i != 0) {
-                    path.append(" -> ");
+        int parent = head;
+        cost[head] = 0;
+        while (parent != target) {
+            int headCost = cost[parent];
+            for (Vertex<Integer> child : graph[parent]) {
+                int sumCost = child.cost() + headCost;
+                if (cost[child.name()] > sumCost) {
+                    cost[child.name()] = sumCost;
+                    parents[child.name()] = parent;
                 }
             }
-            return "total cost: " + totalCost + "; path: " + path;
+            int min = Integer.MAX_VALUE - 1;
+            for (int i = 0; i < graphSize; i++) {
+                if (!checked[i] && cost[i] < min) {
+                    parent = i;
+                    min = cost[i];
+                }
+            }
+            checked[parent] = true;
         }
+        int i = target;
+        Stack<Integer> pathToTarget = new Stack<>();
+        pathToTarget.add(target);
+        while (i != head) {
+            i = parents[i];
+            pathToTarget.add(i);
+        }
+        return new Path<>(pathToTarget, cost[target]);
     }
 }
