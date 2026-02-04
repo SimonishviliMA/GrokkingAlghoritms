@@ -1,4 +1,4 @@
-package ru.mikhail.chapter_8;
+package ru.mikhail.chapter_9;
 
 import java.util.HashSet;
 import java.util.Set;

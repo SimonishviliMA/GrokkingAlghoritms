@@ -1,8 +1,8 @@
-package ru.mikhail.chapter_7;
+package ru.mikhail.chapter_8;
 
 import java.util.*;
 
-import static ru.mikhail.chapter_7.State.*;
+import static ru.mikhail.chapter_8.State.*;
 
 public class GreedyAlgorithm_7 {
 

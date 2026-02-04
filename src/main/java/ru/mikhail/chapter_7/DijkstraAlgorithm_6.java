@@ -1,4 +1,4 @@
-package ru.mikhail.chapter_6;
+package ru.mikhail.chapter_7;
 
 import java.util.*;
 

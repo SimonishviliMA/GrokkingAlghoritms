@@ -1,4 +1,4 @@
-package ru.mikhail.chapter_7;
+package ru.mikhail.chapter_8;
 
 public enum State {
     ID,
