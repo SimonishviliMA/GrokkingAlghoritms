@@ -35,26 +35,59 @@ public class KNearestNeighborsAlgorithm_10 {
                 DRAMA, 0,
                 HORROR, 4
         ));
-        System.out.println(kNearestNeighborsAlgorithm(persons, target));
+        System.out.println(kNearestNeighborsAlgorithmPythagoreanTheorem(persons, target));
+        System.out.println(kNearestNeighborsAlgorithmCosineSimilarity(persons, target));
     }
 
-    private static Recommend kNearestNeighborsAlgorithm(Person[] persons, Person target) {
+    private static Recommend kNearestNeighborsAlgorithmPythagoreanTheorem(Person[] persons, Person target) {
         if (persons.length == 0) return null;
         Recommend recommend = null;
         Map<Category, Integer> targetRates = target.rates();
         for (Person person : persons) {
             Map<Category, Integer> personRates = person.rates();
-            double recommendRate = 0;
-            for (Category value : getValues()) {
-                recommendRate += Math.pow(Optional.ofNullable(personRates.get(value)).orElse(0) - Optional.ofNullable(targetRates.get(value)).orElse(0), 2);
-            }
-            if (recommendRate != 0) {
-                recommendRate = Math.sqrt(recommendRate);
-            }
+            double recommendRate = calculateRatePythagoreanTheorem(personRates, targetRates);
+
             if (recommend == null || recommendRate < recommend.rate()) {
                 recommend = new Recommend(person, recommendRate);
             }
         }
         return recommend;
+    }
+
+    private static double calculateRatePythagoreanTheorem(Map<Category, Integer> personRates, Map<Category, Integer> targetRates) {
+        double recommendRate = 0;
+        for (Category value : Category.getValues()) {
+            recommendRate += Math.pow(Optional.ofNullable(personRates.get(value)).orElse(0) - Optional.ofNullable(targetRates.get(value)).orElse(0), 2);
+        }
+        return Math.sqrt(recommendRate);
+    }
+
+    private static Recommend kNearestNeighborsAlgorithmCosineSimilarity(Person[] persons, Person target) {
+        if (persons.length == 0) return null;
+        Recommend recommend = null;
+        Map<Category, Integer> targetRates = target.rates();
+        for (Person person : persons) {
+            Map<Category, Integer> personRates = person.rates();
+            double recommendRate = calculateRateCosineSimilarity(personRates, targetRates);
+
+            if (recommend == null || recommendRate > recommend.rate()) {
+                recommend = new Recommend(person, recommendRate);
+            }
+        }
+        return recommend;
+    }
+
+    private static double calculateRateCosineSimilarity(Map<Category, Integer> personRates, Map<Category, Integer> targetRates) {
+        double dotProduct = 0;
+        double personEuclideanNorm = 0;
+        double targetEuclideanNorm = 0;
+        for (Category value : getValues()) {
+            int personRate = Optional.ofNullable(personRates.get(value)).orElse(0);
+            int targetRate = Optional.ofNullable(targetRates.get(value)).orElse(0);
+            dotProduct += personRate * targetRate;
+            personEuclideanNorm += Math.pow(personRate, 2);
+            targetEuclideanNorm += Math.pow(targetRate, 2);
+        }
+        return 1 - dotProduct / (Math.sqrt(personEuclideanNorm) * Math.sqrt(targetEuclideanNorm));
     }
 }
