@@ -12,10 +12,30 @@ public class DynamicProgrammingAlgorithm_8 {
                 new Product("Guitar", 1500, 1),
                 new Product("Iphone", 2000, 1)
         };
-        System.out.println(dynamicProgrammingAlgorithm(4, products));
+        System.out.println(dynamicProgrammingAlgorithm(products, 4));
+        System.out.println(recursiveDPAlgorithm(products, 4, products.length));
     }
 
-    private static Total dynamicProgrammingAlgorithm(int backpackMaxWeight, Product[] products) {
+    private static Total recursiveDPAlgorithm(Product[] products, int capacity, int i) {
+        if (i == 0 || capacity == 0) return new Total(new HashSet<>(), 0, 0);
+
+        Product product = products[i - 1];
+
+        if (product.weight() > capacity) {
+            return recursiveDPAlgorithm(products, capacity, i - 1);
+        }
+
+        Total skip = recursiveDPAlgorithm(products, capacity, i - 1);
+
+        Total take = recursiveDPAlgorithm(products, capacity - product.weight(), i - 1);
+        take.getProducts().add(product);
+        take.setCost(take.getCost() + product.cost());
+        take.setWeight(take.getWeight() + product.weight());
+
+        return take.getCost() > skip.getCost() ? take : skip;
+    }
+
+    private static Total dynamicProgrammingAlgorithm(Product[] products, int backpackMaxWeight) {
 
         Total[][] totals = new Total[products.length][backpackMaxWeight];
 
@@ -37,13 +57,13 @@ public class DynamicProgrammingAlgorithm_8 {
                     if (j - product.weight() >= 0) {
                         Total fitTotal = totals[i - 1][j - product.weight()];
                         if (fitTotal != null) {
-                            productSet.addAll(fitTotal.products());
-                            totalCost += fitTotal.cost();
-                            totalWeight += fitTotal.weight();
+                            productSet.addAll(fitTotal.getProducts());
+                            totalCost += fitTotal.getCost();
+                            totalWeight += fitTotal.getWeight();
                         }
                     }
 
-                    if (totals[i - 1][j] != null && totals[i - 1][j].cost() > totalCost) {
+                    if (totals[i - 1][j] != null && totals[i - 1][j].getCost() > totalCost) {
                         totals[i][j] = totals[i - 1][j];
                     } else {
                         totals[i][j] = new Total(productSet, totalCost, totalWeight);
